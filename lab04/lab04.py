@@ -20,6 +20,10 @@ def summation(n, term):
     """
     assert n >= 1
     "*** YOUR CODE HERE ***"
+    if n==1:
+        return term(1)
+    else:
+        return summation(n-1,term)+term(n)
 
 
 def paths(m, n):
@@ -36,6 +40,11 @@ def paths(m, n):
     1
     """
     "*** YOUR CODE HERE ***"
+    if m==1 or n ==1:
+        return 1
+    else:
+        return paths(m-1,n)+paths(m,n-1)
+    
 
 
 def pascal(row, column):
@@ -51,6 +60,13 @@ def pascal(row, column):
     6
     """
     "*** YOUR CODE HERE ***"
+    if row==0 and column==0:
+        return 1
+    if column>row or column<0:
+        return 0 
+    if row==1 and column<=1:
+        return 1
+    return pascal(row-1,column)+pascal(row-1,column-1)
 
 
 def double_eights(n):
@@ -75,3 +91,9 @@ def double_eights(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    last_number,second = n%10,(n//10)%10
+    if last_number==8 and second==8:
+        return True
+    elif n<100:
+        return False
+    return double_eights(n//10)

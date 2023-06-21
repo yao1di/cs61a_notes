@@ -25,6 +25,13 @@ def num_eights(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n==0:
+        return 0
+    else:
+        if n %10==8:
+            return 1+num_eights(n//10)
+        else:
+            return num_eights(n//10)
 
 
 def pingpong(n):
@@ -61,6 +68,23 @@ def pingpong(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    #k=1
+    #temp = 1
+    #while k<=n:
+    #    if num_eights(n)>=1 or n%8==0:
+    #        temp = switch_func(temp)
+    #    k = k+temp
+    def change_func(k):
+        return -k
+    def helper_func(n,count=1,switch=1):
+        if n==count:
+            return switch
+        if num_eights(count)>=1 or count%8==0:
+            return switch+helper_func(n,count+1,change_func(switch))
+        return switch+helper_func(n,count+1,switch)
+        
+    return helper_func(n)
+
 
 
 def next_larger_coin(coin):
@@ -117,3 +141,12 @@ def count_coins(change):
     True
     """
     "*** YOUR CODE HERE ***"
+    def helper_func(change,coin=25):
+        coin_next_small = next_smaller_coin(coin)
+        if change==0:
+            return 1
+        elif change<0 or coin==None:
+            return 0
+        else:
+            return +helper_func(change-coin,coin)+helper_func(change,coin_next_small)
+    return helper_func(change)

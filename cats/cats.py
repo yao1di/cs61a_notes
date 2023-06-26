@@ -30,7 +30,13 @@ def pick(paragraphs, select, k):
     ''
     """
     # BEGIN PROBLEM 1
-    "*** YOUR CODE HERE ***"
+    index= 0
+    for item in paragraphs:
+        if select(item):
+            index +=1
+        if k==index-1:
+            return item
+    return ''
     # END PROBLEM 1
 
 
@@ -50,6 +56,13 @@ def about(subject):
     assert all([lower(x) == x for x in subject]), 'subjects should be lowercase.'
     # BEGIN PROBLEM 2
     "*** YOUR CODE HERE ***"
+    def select_func(paragraph):
+        s = split(lower(remove_punctuation(paragraph)))
+        for item in s:
+            if item in subject:
+                return True
+        return False
+    return select_func
     # END PROBLEM 2
 
 
@@ -79,7 +92,20 @@ def accuracy(typed, source):
     typed_words = split(typed)
     source_words = split(source)
     # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    while typed_words==[]:
+        if source_words==[]:
+            return 100.0
+        else:
+            return 0.0
+    total_length = len(typed_words)
+    accuracy_of_number = 0
+    for i in range(total_length):
+        if i==len(source_words):
+            break
+        if typed_words[i]==source_words[i]:
+            accuracy_of_number +=1
+
+    return accuracy_of_number/total_length *100
     # END PROBLEM 3
 
 
@@ -98,6 +124,8 @@ def wpm(typed, elapsed):
     assert elapsed > 0, 'Elapsed time must be positive'
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
+    words = len(typed)/5.0
+    return words*60/elapsed
     # END PROBLEM 4
 
 
@@ -125,6 +153,20 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     """
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    score = []
+    for item in word_list:
+        score.append(diff_function(typed_word,item,limit))
+        #if item==typed_word:
+            #return typed_word
+    #for i in range(len(score)):
+    if min(score)>limit: 
+        return typed_word  ### 注意这里是大于不是大于等于
+    #elif typed_word in word_list:
+        #return typed_word
+    else:
+        if typed_word in word_list:
+            return typed_word
+        return  word_list[score.index(min(score))] 
     # END PROBLEM 5
 
 

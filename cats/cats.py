@@ -221,33 +221,15 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    if typed==source: # 如果串相等，说明这一支不用改为0
-        return 0
-    if limit==0: #更改次数的限制
-        return 1
-    if len(typed)==1 or len(source)==1: #如果存在有一个为0的情况下，若是首字母相等
-        temp = abs(len(typed)-len(source)) #要更改长度差，首字母不相等，更改长度差加一。
-        return temp if typed[:1]==source[:1] else temp+1
-    if typed[0]==source[0]: #如果首字母相等，继续迭代
-        return feline_fixes(typed[1:],source[1:],limit)
-    else: #首字母不相等，继续迭代，但是更改次数少一次。
-        return 1+feline_fixes(typed[1:],source[1:],limit-1)
-
-
-def final_diff(typed, source, limit):
-    """A diff function that takes in a string TYPED, a string SOURCE, and a number LIMIT.
-    If you implement this function, it will be used."""
-    # assert False, 'Remove this line to use your final_diff function.'
     if typed==source:  # Base cases should go here, you may add more base cases as needed.
         # BEGIN
         "*** YOUR CODE HERE ***"
         return 0
         # END
-    if limit==0:
-        return 1
-    if len(typed)==1 or len(source)==1:
-        temp = abs(len(typed)-len(source))
-        return temp if typed[0]==source[0] else temp+1
+    if limit<0:
+        return 1+abs(len(typed)-len(source))
+    if typed ==''or source=='':
+        return max(len(typed),len(source))
     # Recursive cases should go below here
     if typed[:1]==source[:1]:  # Feel free to remove or add additional cases
         # BEGIN
@@ -255,19 +237,17 @@ def final_diff(typed, source, limit):
         return minimum_mewtations(typed[1:],source[1:],limit)
         # END
     else:
-        add = (typed[0]==source[1]) # Fill in these lines
-        remove = (typed[1] ==source[0])
-        substitute = (len(typed)==len(source))
+        add = 1+minimum_mewtations(typed,source[1:],limit-1) # Fill in these lines
+        remove = 1+minimum_mewtations(typed[1:],source,limit-1)
+        substitute = 1+minimum_mewtations(typed[1:],source[1:],limit-1)
         # BEGIN
         "*** YOUR CODE HERE ***"
-        if add:
-            return 1+minimum_mewtations(typed,source[1:],limit-1)
-        elif remove:
-            return 1+minimum_mewtations(typed[1:],source,limit-1)
-        elif substitute:
-            return 1+minimum_mewtations(typed[1:],source[1:],limit-1)
-        # END
+        return min(add,remove,substitute)
 
+def final_diff(typed, source, limit):
+    """A diff function that takes in a string TYPED, a string SOURCE, and a number LIMIT.
+    If you implement this function, it will be used."""
+    assert False, 'Remove this line to use your final_diff function.'
 FINAL_DIFF_LIMIT = 6  # REPLACE THIS WITH YOUR LIMIT
 
 
@@ -301,6 +281,14 @@ def report_progress(typed, prompt, user_id, upload):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    i=0
+    while i<len(typed):
+        if typed[i]!=prompt[i]:
+            break
+        i+=1
+    react_ratio = i/len(prompt)
+    upload({'id': user_id,'progress':react_ratio})
+    return react_ratio
     # END PROBLEM 8
 
 
@@ -323,6 +311,11 @@ def time_per_word(words, times_per_player):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    true_time_per_player = [[None for _ in range(len(times_per_player[0])-1)] for _ in range(len(times_per_player))]
+    for j in range(len(true_time_per_player)):
+        for i in range(len(true_time_per_player[0])):
+            true_time_per_player[j][i] = times_per_player[j][i+1]-times_per_player[j][i]
+    return match(words,true_time_per_player)
     # END PROBLEM 9
 
 
@@ -345,6 +338,27 @@ def fastest_words(match):
     word_indices = range(len(get_all_words(match)))    # contains an *index* for each word
     # BEGIN PROBLEM 10
     "*** YOUR CODE HERE ***"
+    lst_time = []
+    for word_index in word_indices:
+        lst = []
+        for player_index in player_indices:
+            lst.append(time(match,player_index,word_index))
+        lst_time.append(lst)
+
+    lst_play =[] #时间得到最小值的玩家的下标
+    for item in lst_time:
+        lst_play.append(item.index(min(item)))
+    
+    lst_result = []
+    for player_index in player_indices:
+        lst_result.append([]) #储存结果用
+    
+#lst_final[player_index] = lst_final[player_index] + [word_at(game, word_index)]
+    for word_index in word_indices:
+        player_index = lst_play[word_index]  
+        lst_result[player_index].append(get_word(match,word_index))
+    
+    return lst_result
     # END PROBLEM 10
 
 

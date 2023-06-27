@@ -192,9 +192,18 @@ def feline_fixes(typed, source, limit):
     >>> feline_fixes("rose", "hello", big_limit)   # Substitute: r->h, o->e, s->l, e->l, length difference of 1.
     5
     """
-    # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
-    # END PROBLEM 6
+    # BEGIN PROBLEM 6 只能使用递归来求解
+    if typed==source: # 如果串相等，说明这一支不用改为0
+        return 0
+    if limit==0: #更改次数的限制
+        return 1
+    if len(typed)==1 or len(source)==1: #如果存在有一个为0的情况下，若是首字母相等
+        temp = abs(len(typed)-len(source)) #要更改长度差，首字母不相等，更改长度差加一。
+        return temp if typed[:1]==source[:1] else temp+1
+    if typed[0]==source[0]: #如果首字母相等，继续迭代
+        return feline_fixes(typed[1:],source[1:],limit)
+    else: #首字母不相等，继续迭代，但是更改次数少一次。
+        return 1+feline_fixes(typed[1:],source[1:],limit-1)
 
 
 def minimum_mewtations(typed, source, limit):
@@ -212,30 +221,52 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    assert False, 'Remove this line'
-    if ___________:  # Base cases should go here, you may add more base cases as needed.
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    # Recursive cases should go below here
-    if ___________:  # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    else:
-        add = ...  # Fill in these lines
-        remove = ...
-        substitute = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+    if typed==source: # 如果串相等，说明这一支不用改为0
+        return 0
+    if limit==0: #更改次数的限制
+        return 1
+    if len(typed)==1 or len(source)==1: #如果存在有一个为0的情况下，若是首字母相等
+        temp = abs(len(typed)-len(source)) #要更改长度差，首字母不相等，更改长度差加一。
+        return temp if typed[:1]==source[:1] else temp+1
+    if typed[0]==source[0]: #如果首字母相等，继续迭代
+        return feline_fixes(typed[1:],source[1:],limit)
+    else: #首字母不相等，继续迭代，但是更改次数少一次。
+        return 1+feline_fixes(typed[1:],source[1:],limit-1)
 
 
 def final_diff(typed, source, limit):
     """A diff function that takes in a string TYPED, a string SOURCE, and a number LIMIT.
     If you implement this function, it will be used."""
-    assert False, 'Remove this line to use your final_diff function.'
-
+    # assert False, 'Remove this line to use your final_diff function.'
+    if typed==source:  # Base cases should go here, you may add more base cases as needed.
+        # BEGIN
+        "*** YOUR CODE HERE ***"
+        return 0
+        # END
+    if limit==0:
+        return 1
+    if len(typed)==1 or len(source)==1:
+        temp = abs(len(typed)-len(source))
+        return temp if typed[0]==source[0] else temp+1
+    # Recursive cases should go below here
+    if typed[:1]==source[:1]:  # Feel free to remove or add additional cases
+        # BEGIN
+        "*** YOUR CODE HERE ***"
+        return minimum_mewtations(typed[1:],source[1:],limit)
+        # END
+    else:
+        add = (typed[0]==source[1]) # Fill in these lines
+        remove = (typed[1] ==source[0])
+        substitute = (len(typed)==len(source))
+        # BEGIN
+        "*** YOUR CODE HERE ***"
+        if add:
+            return 1+minimum_mewtations(typed,source[1:],limit-1)
+        elif remove:
+            return 1+minimum_mewtations(typed[1:],source,limit-1)
+        elif substitute:
+            return 1+minimum_mewtations(typed[1:],source[1:],limit-1)
+        # END
 
 FINAL_DIFF_LIMIT = 6  # REPLACE THIS WITH YOUR LIMIT
 

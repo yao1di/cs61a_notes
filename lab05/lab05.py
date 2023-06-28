@@ -25,7 +25,16 @@ def flatten(s):
     [[1, [1, [1, [1, 1, [1, 1, [1]]]], 1]]]
     """
     "*** YOUR CODE HERE ***"
-
+    #result = []
+    #base case
+    result=[]
+     
+    for item in s:
+        if type(item)==list:
+            result=result+flatten(item)
+        else:
+            result +=[item]
+    return result
 
 def my_map(fn, seq):
     """Applies fn onto each element in seq and returns a list.
@@ -39,7 +48,7 @@ def my_map(fn, seq):
     2023
     [None, None, None]
     """
-    return ______
+    return [fn(item) for item in seq]
 
 
 def my_filter(pred, seq):
@@ -58,7 +67,7 @@ def my_filter(pred, seq):
     >>> my_filter(lambda x: max(5, x) == 5, [1, 2, 3, 4, 5, 6, 7])
     [1, 2, 3, 4, 5]
     """
-    return ______
+    return [seq[i] for i in range(len(seq)) if pred(seq[i])]
 
 
 def my_reduce(combiner, seq):
@@ -74,6 +83,12 @@ def my_reduce(combiner, seq):
     11
     """
     "*** YOUR CODE HERE ***"
+    if len(seq)==1:
+        return seq[0]
+    elif len(seq)==2:
+        return combiner(seq[0],seq[1])
+    else:
+        return combiner(combiner(seq[0],seq[1]),my_reduce(combiner,seq[2:]))
 
 
 def my_map_syntax_check():
@@ -113,6 +128,11 @@ def distance(city_a, city_b):
     5.0
     """
     "*** YOUR CODE HERE ***"
+    lat_a = get_lat(city_a)
+    lat_b = get_lat(city_b)
+    lon_a = get_lon(city_a)
+    lon_b = get_lon(city_b)
+    return sqrt((lat_a-lat_b)**2+(lon_a-lon_b)**2)
 
 
 def closer_city(lat, lon, city_a, city_b):
@@ -131,6 +151,14 @@ def closer_city(lat, lon, city_a, city_b):
     'Bucharest'
     """
     "*** YOUR CODE HERE ***"
+    city_c = make_city('city_c',lat,lon)
+    distance_ac = distance(city_a,city_c)
+    distance_bc = distance(city_b,city_c)
+    if distance_ac<=distance_bc:
+        return get_name(city_a)
+    else:
+        return get_name(city_b)
+
 
 
 def check_city_abstraction():
@@ -221,7 +249,11 @@ def count_palindromes(L):
     >>> count_palindromes(("Acme", "Madam", "Pivot", "Pip"))
     2
     """
-    return ______
+    lst = []
+    for item in L:
+        lst += [item.lower()]
+        
+    return len([True for item in lst if item==item[::-1]])
 
 
 def coords(fn, seq, lower, upper):
@@ -232,7 +264,7 @@ def coords(fn, seq, lower, upper):
     [[-2, 4], [1, 1], [3, 9]]
     """
     "*** YOUR CODE HERE ***"
-    return ______
+    return [[seq[i],fn(seq[i])] for i in range(len(seq)) if fn(seq[i])>=lower and fn(seq[i])<=upper]
 
 
 def change_abstraction(change):

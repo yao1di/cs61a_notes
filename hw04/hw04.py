@@ -65,18 +65,20 @@ def planet(mass):
     """Construct a planet of some mass."""
     assert mass > 0
     "*** YOUR CODE HERE ***"
+    return ['planet',mass]
 
 
 def mass(w):
     """Select the mass of a planet."""
     assert is_planet(w), 'must call mass on a planet'
     "*** YOUR CODE HERE ***"
+    return w[1]
+
 
 
 def is_planet(w):
     """Whether w is a planet."""
     return type(w) == list and len(w) == 2 and w[0] == 'planet'
-
 
 def examples():
     t = mobile(arm(1, planet(2)),
@@ -127,6 +129,17 @@ def balanced(m):
     True
     """
     "*** YOUR CODE HERE ***"
+    left_arm = left(m)
+    right_arm = right(m)
+    length_left = length(left_arm)
+    length_right = length(right_arm)
+    if is_mobile(end(left_arm)):
+        return balanced(end(left_arm))
+    elif is_mobile(end(right_arm)):
+        return balanced(end(right_arm))
+    else:
+        return length_left*total_weight(end(left_arm)) == total_weight(end(right_arm))*length_right
+
 
 
 def totals_tree(m):

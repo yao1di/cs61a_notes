@@ -129,18 +129,24 @@ def balanced(m):
     True
     """
     "*** YOUR CODE HERE ***"
-    left_arm = left(m)
-    right_arm = right(m)
-    length_left = length(left_arm)
-    length_right = length(right_arm)
-    if is_mobile(end(left_arm)):
-        return balanced(end(left_arm))
-    elif is_mobile(end(right_arm)):
-        return balanced(end(right_arm))
+    # #我的答案
+    #if is_planet(end(left_arm)) and is_planet(end(right_arm)):
+    #    return temp
+    #elif is_planet(end(left_arm)) and is_mobile(end(right_arm)):
+    #    return temp and balanced(end(right_arm))
+    #elif is_planet(end(right_arm)) and is_mobile(end(left_arm)):
+    #    return temp and balanced(end(left_arm))
+    #else:
+    #    return temp and balanced(end(left_arm)) and balanced(end(right_arm))
+    if is_planet(m):
+        return True
     else:
-        return length_left*total_weight(end(left_arm)) == total_weight(end(right_arm))*length_right
-
-
+        left_arm = left(m)
+        right_arm = right(m)
+        length_left = length(left_arm)
+        length_right = length(right_arm)
+        temp = (length_left*total_weight(end(left_arm)) == total_weight(end(right_arm))*length_right)
+        return temp and balanced(end(left_arm)) and balanced(end(right_arm))
 
 def totals_tree(m):
     """Return a tree representing the mobile with its total weight at the root.

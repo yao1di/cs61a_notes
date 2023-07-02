@@ -30,6 +30,13 @@ def insert_items(lst, entry, elem):
     True
     """
     "*** YOUR CODE HERE ***"
+    i=0
+    while i <len(lst):
+        if entry==lst[i]:
+            lst.insert(i+1,elem)
+            i+=1
+        i+=1
+    return lst
 
 
 def count_occurrences(t, n, x):
@@ -53,13 +60,21 @@ def count_occurrences(t, n, x):
     2
     """
     "*** YOUR CODE HERE ***"
+    if n==0:
+        return 0
+    else:
+        if x == next(t):
+            return 1+ count_occurrences(t,n-1,x)
+        else:
+            return count_occurrences(t,n-1,x)
+    
 
 
 def repeated(t, k):
     """Return the first value in iterator T that appears K times in a row.
     Iterate through the items such that if the same iterator is passed into
     the function twice, it continues in the second call at the point it left
-    off in the first.
+    off in the first.  注意是连续出现
 
     >>> s = iter([10, 9, 10, 9, 9, 10, 8, 8, 8, 7])
     >>> repeated(s, 2)
@@ -78,6 +93,23 @@ def repeated(t, k):
     """
     assert k > 1
     "*** YOUR CODE HERE ***"
+    t_last = None
+    count=1
+    k_origin = k
+    while k>0:
+        t_next = next(t)
+        if t_next == t_last:
+            count +=1
+            k-=1
+        else:
+            t_last = t_next
+            count=1
+            k = k_origin-1
+        
+    
+    return t_next
+
+    
 
 
 def partial_reverse(lst, start):
@@ -93,6 +125,8 @@ def partial_reverse(lst, start):
     [1, 2, 7, 6, 5, 3, 4]
     """
     "*** YOUR CODE HERE ***"
+    lst[start:]=reversed([lst[i] for i in range(start,len(lst))])
+
 
 
 def index_largest(seq):
@@ -105,6 +139,21 @@ def index_largest(seq):
     """
     assert len(seq) > 0
     "*** YOUR CODE HERE ***"
+    len_seq = len(seq)
+    s = iter(seq)
+    s_max = next(s)
+    k=0
+    index=k
+    while k<len_seq-1:
+        k+=1
+        s_next = next(s)
+        if s_next>s_max:
+            s_max = s_next
+            index = k
+
+    return index
+
+
 
 
 def pizza_sort(lst):
@@ -116,11 +165,11 @@ def pizza_sort(lst):
     >>> a
     [9, 8, 7, 5, 3, 2, 1]
     """
-    pizza_sort_helper(________, ________)
+    pizza_sort_helper(lst,0)
 
 
 def pizza_sort_helper(lst, start):
-    if _______________:
-        partial_reverse(________, ________)
-        partial_reverse(________, ________)
-        _______________(________, ________)
+    if start <len(lst)-1:
+        partial_reverse(lst, start+index_largest(lst[start:]))
+        partial_reverse(lst,start)
+        pizza_sort_helper(lst, start+1)

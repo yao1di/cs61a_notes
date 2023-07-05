@@ -7,6 +7,11 @@ def amplify(f, x):
     [14, 6, 2]
     """
     "*** YOUR CODE HERE ***"
+    if not x:
+        StopIteration
+    else:
+        yield x
+        yield from amplify(f,f(x))  
 
 
 class Person:
@@ -31,10 +36,12 @@ class Person:
 
     def __init__(self, name):
         self.name = name
+        self.stuff = 'I squirreled it away before it could catch on fire.'
         "*** YOUR CODE HERE ***"
 
     def say(self, stuff):
         "*** YOUR CODE HERE ***"
+        self.stuff = stuff
         return stuff
 
     def ask(self, stuff):
@@ -45,6 +52,8 @@ class Person:
 
     def repeat(self):
         "*** YOUR CODE HERE ***"
+        return self.say(self.stuff)
+
 
 
 class SmartFridge:
@@ -70,9 +79,20 @@ class SmartFridge:
         self.items = {}
 
     def add_item(self, item, quantity):
+        if item in self.items:
+            self.items[item] = self.items[item]+quantity
+        else:
+            self.items[item] = quantity
+        return f'I now have {self.items[item]} {item}'
         "*** YOUR CODE HERE ***"
 
     def use_item(self, item, quantity):
+        if self.items[item]<=quantity:
+            self.items[item] = 0
+            return f'Oh no, we need more {item}!'
+        else:
+            self.items[item] = self.items[item]-quantity
+            return f'I have {self.items[item]} {item} left'
         "*** YOUR CODE HERE ***"
 
 
@@ -121,13 +141,13 @@ class Round:
     def play(self, who, card):
         assert not self.is_complete(), f'The round is over, player {who}'
         assert who == self.next_player, f'It is not your turn, player {who}'
-        self.next_player = ______________________________________
+        self.next_player = (who+1)%self.players
         if card >= self.highest:
-            ______________________________________
-            ______________________________________
-        if ______________________________________:
-            ______________________________________
+            self.winner_temp = who
+            self.highest = card
+        if self.is_complete():
+            self.winner = self.winner_temp
 
     def is_complete(self):
         """ Checks if a game could end. """
-        return ______________________________________
+        return self.next_player ==self.starter and self.highest>-1

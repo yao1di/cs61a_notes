@@ -9,6 +9,15 @@ def hailstone(n):
     1
     """
     "*** YOUR CODE HERE ***"
+    if n==1:
+        yield n
+        yield from hailstone(n)
+    elif n%2==1:
+        yield n
+        yield from hailstone(3*n+1)
+    elif n%2==0:
+        yield n
+        yield from hailstone(n//2)
 
 
 def merge(a, b):
@@ -24,6 +33,21 @@ def merge(a, b):
     [2, 3, 5, 7, 8, 9, 11, 13, 14, 15]
     """
     "*** YOUR CODE HERE ***"
+    last_a=next(a)
+    last_b=next(b)
+    while True:
+        if last_a==last_b:
+            yield last_a
+            last_a = next(a)
+            last_b = next(b)
+        if last_a<last_b:
+            yield last_a
+            last_a = next(a)
+        else:
+            yield last_b
+            last_b = next(b)
+    
+
 
 
 def perms(seq):
@@ -49,6 +73,30 @@ def perms(seq):
     [['a', 'b'], ['b', 'a']]
     """
     "*** YOUR CODE HERE ***"
+    #if not seq:
+    #    yield []
+    #else:
+    #    for p in perms(seq[1:]):
+    #        for i in range(len(seq)):
+    #            yield p[:i] + [seq[0]] + p[i:]
+    seq = list(seq)
+    N=len(seq)
+    if N==1:
+        yield seq
+    if N==2:
+        yield seq
+        yield seq[::-1]
+    for j in range(2,len(seq)):
+        for k in range(j+1):
+            seq_seq = seq[:j]
+            seq_rev = seq_seq[::-1]
+            seq_seq.insert(k,seq[j])
+            seq_rev.insert(k,seq[j])
+            yield seq_seq
+            yield seq_rev
+            
+        
+        
 
 
 def yield_paths(t, value):
@@ -86,9 +134,11 @@ def yield_paths(t, value):
     [[0, 2], [0, 2, 1, 2]]
     """
     "*** YOUR CODE HERE ***"
-    for _______________ in _________________:
-        for _______________ in _________________:
-            "*** YOUR CODE HERE ***"
+    if label(t)==value:
+        yield [label(t)]
+    for b in branches(t):
+        for path in yield_paths(b,value):
+            yield [label(t)]+path
 
 
 def remainders_generator(m):
@@ -123,6 +173,13 @@ def remainders_generator(m):
     11
     """
     "*** YOUR CODE HERE ***"
+    def helper_generator(n):
+        for item in naturals():
+            if item%m==n:
+                yield item
+    for i in range(m):
+        yield helper_generator(i)
+
 
 
 # Tree ADT

@@ -34,9 +34,13 @@ class Mint:
 
     def create(self, coin):
         "*** YOUR CODE HERE ***"
-
+        return coin(self.year)
+    
     def update(self):
         "*** YOUR CODE HERE ***"
+        self.year =  self.present_year
+
+
 
 
 class Coin:
@@ -47,6 +51,12 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
+        age = Mint.present_year-self.year
+        if age>50:
+            return self.cents +age-50
+        else:
+            return self.cents
+        #return self.cents + age-50
 
 
 class Nickel(Coin):
@@ -95,6 +105,41 @@ class VendingMachine:
     'Here is your soda.'
     """
     "*** YOUR CODE HERE ***"
+    def __init__(self,name,price):
+        self.name = name
+        self.price = price
+        self.stock_num=0
+        self.fund = 0
+
+    def add_funds(self,fund):
+        self.fund +=fund
+        if self.stock_num==0:
+            if self.fund==0:
+                return  'Nothing left to vend. Please restock.'
+            else:
+                self.fund = 0
+                return  f'Nothing left to vend. Please restock. Here is your ${fund}.'
+        else:
+            return f'Current balance: ${self.fund}'
+
+    def restock(self,stock_num):
+        self.stock_num +=stock_num
+        return f'Current {self.name} stock: {self.stock_num}'
+    
+    def vend(self):
+        if self.stock_num==0:
+            return 'Nothing left to vend. Please restock.'
+        elif self.fund<self.price:
+            return f'Please add ${self.price-self.fund} more funds.'
+        elif self.fund==self.price:
+            self.fund=0
+            self.stock_num -=1
+            return f'Here is your {self.name}.'
+        else:
+            change =self.fund-self.price
+            self.fund =0
+            self.stock_num -=1
+            return f'Here is your {self.name} and ${change} change.'
 
 
 def make_test_random():

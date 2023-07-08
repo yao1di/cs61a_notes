@@ -200,9 +200,21 @@ class Player:
 
     def debate(self, other):
         "*** YOUR CODE HERE ***"
+        posibility_a = max(0.1,self.popularity/(self.popularity+other.popularity))
+        if random() < posibility_a:
+            self.popularity+=50
+        else:
+            self.popularity-=50
+            if self.popularity<0:
+                self.popularity=0
 
     def speech(self, other):
         "*** YOUR CODE HERE ***"
+        p1= self.popularity//10
+        self.popularity +=p1
+        self.votes += p1
+        other.popularity -= other.popularity//10
+
 
     def choose(self, other):
         return self.speech
@@ -227,6 +239,17 @@ class Game:
     def play(self):
         while not self.game_over():
             "*** YOUR CODE HERE ***"
+            
+            #self.p1.choose(self.p2)(self.p2)
+            #self.turn+=1
+            #self.p2.choose(self.p1)(self.p1)
+            #self.turn+=1
+            if self.turn%2==0:
+                curr,play = self.p1,self.p2
+            else:
+                curr,play = self.p2,self.p1
+            curr.choose(play)(play)
+            self.turn +=1
         return self.winner()
 
     def game_over(self):
@@ -234,6 +257,12 @@ class Game:
 
     def winner(self):
         "*** YOUR CODE HERE ***"
+        winner_player = None
+        if self.p1.votes>self.p2.votes:
+            winner_player = self.p1
+        elif self.p1.votes<self.p2.votes:
+            winner_player = self.p2
+        return winner_player
 
 
 # Phase 3: New Players
@@ -250,6 +279,10 @@ class AggressivePlayer(Player):
 
     def choose(self, other):
         "*** YOUR CODE HERE ***"
+        if self.popularity <= other.popularity:
+            return self.debate
+        else:
+            return self.speech
 
 
 class CautiousPlayer(Player):
@@ -267,6 +300,10 @@ class CautiousPlayer(Player):
 
     def choose(self, other):
         "*** YOUR CODE HERE ***"
+        if self.popularity==0:
+            return self.debate
+        else:
+            return self.speech
 
 
 class VirFib():
@@ -296,6 +333,13 @@ class VirFib():
 
     def next(self):
         "*** YOUR CODE HERE ***"
+        if self.value==0:
+            next_number = VirFib(1)
+            next_number.last_number = self.value
+        else:
+            next_number = VirFib(self.value+self.last_number)
+            next_number.last_number = self.value
+        return next_number
 
     def __repr__(self):
         return "VirFib object, value " + str(self.value)

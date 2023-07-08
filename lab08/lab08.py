@@ -39,6 +39,12 @@ class Account:
         """Return the number of years until balance would grow to amount."""
         assert self.balance > 0 and amount > 0 and self.interest > 0
         "*** YOUR CODE HERE ***"
+        year = 0
+        retire = self.balance
+        while amount>retire:
+            retire *=1+self.interest
+            year +=1
+        return year
 
 
 class FreeChecking(Account):
@@ -68,3 +74,11 @@ class FreeChecking(Account):
     free_withdrawals = 2
 
     "*** YOUR CODE HERE ***"
+    def withdraw(self, amount):
+        if self.free_withdrawals>0:
+            self.free_withdrawals-=1
+            result=super().withdraw(amount)
+            return result
+        else:
+            result = super().withdraw(amount+self.withdraw_fee)
+            return result

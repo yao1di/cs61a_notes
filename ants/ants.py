@@ -29,8 +29,7 @@ class Place:
         "*** YOUR CODE HERE ***"
         if exit:
             #self.entrance = name
-            exit.entrance = self
-            
+            self.exit.entrance = self
         # END Problem 2
 
     def add_insect(self, insect):
@@ -136,7 +135,14 @@ class Ant(Insect):
             place.ant = self
         else:
             # BEGIN Problem 8b
-            assert place.ant is None, 'Two ants in {0}'.format(place)
+            if self.can_contain(place.ant) and self.is_container:
+                self.store_ant(place.ant)
+                place.remove_insect(place.ant)
+                place.add_insect(self)
+            elif place.ant.can_contain(self) and place.ant.is_container:
+                place.ant.store_ant(self)
+            else:
+                assert ((place.ant is None)or (self.can_contain(place.ant)or(place.ant.can_contain(self)))), 'Two ants in {0}'.format(place)
             # END Problem 8b
         Insect.add_to(self, place)
 
@@ -186,7 +192,7 @@ class ThrowerAnt(Ant):
     food_cost = 3
     health = 1
     upper_bound = float('inf')  ### 重要问题在这里
-    lower_bound = 0
+    lower_bound = -1
     def nearest_bee(self):
         """Return the nearest Bee in a Place that is not the HIVE, connected to
         the ThrowerAnt's Place by following entrances.
@@ -196,13 +202,22 @@ class ThrowerAnt(Ant):
         # BEGIN Problem 3 and 4
         place_current = self.place
         place_transition = 0
-        while not place_current.is_hive:
+        #if place_current:
+        #    while not place_current.is_hive:
+        #        if place_current.bees != []:
+        #            if self.lower_bound<=place_transition<=self.upper_bound:
+        #                return random_bee(place_current.bees)
+        #        place_current = place_current.entrance
+        #        place_transition +=1
+        #return None
+        while place_current is not None and not place_current.is_hive:
             if place_current.bees != []:
-                if self.lower_bound<=place_transition<=self.upper_bound:
+                if self.lower_bound<=place_transition and place_transition<=self.upper_bound:
                     return random_bee(place_current.bees)
             place_current = place_current.entrance
-            place_transition +=1
+            place_transition += 1
         return None
+
         # return random_bee(self.place.bees)  # REPLACE THIS LINE
         # END Problem 3 and 4
 
@@ -290,10 +305,38 @@ class FireAnt(Ant):
 
 # BEGIN Problem 6
 # The WallAnt class
+class WallAnt(Ant):
+   # health = 4
+    food_cost = 4
+    implemented = True
+    name = 'Wall'
+    def __init__(self, health=4):
+        """Create an Insect with a health amount and a starting PLACE."""
+        super().__init__(health)
 # END Problem 6
 
 # BEGIN Problem 7
 # The HungryAnt Class
+class HungryAnt(Ant):
+    chewing_turns = 3
+    food_cost = 4
+    implemented = True
+    name = 'Hungry'
+
+    def __init__(self, health=1):
+        super().__init__(health)
+        self.turns_to_chew = 0
+
+    def action(self, gamestate):
+        if self.turns_to_chew>0:
+            self.turns_to_chew-=1
+        else:
+            ranbee = random_bee(self.place.bees)
+            # self.place.remove_insect(ranbee)
+            if ranbee:
+                self.turns_to_chew = self.chewing_turns
+                ranbee.reduce_health(ranbee.health)
+                #self.place.remove_insect(ranbee)
 # END Problem 7
 
 
@@ -310,11 +353,16 @@ class ContainerAnt(Ant):
     def can_contain(self, other):
         # BEGIN Problem 8a
         "*** YOUR CODE HERE ***"
+        if (not self.ant_contained) and (not other.is_container):
+            return True
+        else:
+            return False
         # END Problem 8a
 
     def store_ant(self, ant):
         # BEGIN Problem 8a
         "*** YOUR CODE HERE ***"
+        self.ant_contained = ant
         # END Problem 8a
 
     def remove_ant(self, ant):
@@ -335,6 +383,8 @@ class ContainerAnt(Ant):
     def action(self, gamestate):
         # BEGIN Problem 8a
         "*** YOUR CODE HERE ***"
+        if self.ant_contained:
+            self.ant_contained.action(gamestate)
         # END Problem 8a
 
 
@@ -345,7 +395,9 @@ class BodyguardAnt(ContainerAnt):
     food_cost = 4
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 8c
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    def __init__(self, health=2):
+        super().__init__(health)
     # END Problem 8c
 
 # BEGIN Problem 9

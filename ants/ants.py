@@ -109,6 +109,7 @@ class Ant(Insect):
     food_cost = 0
     is_container = False
     doubled_damage = False
+    blocks_path = True
     # ADD CLASS ATTRIBUTES HERE
 
     def __init__(self, health=1):
@@ -519,17 +520,17 @@ class SlowThrower(ThrowerAnt):
 
         # BEGIN Problem 13
         if target is not None:
-            target.is_slowed = True
-            target.slowed_turns = 1
+            #target.is_slowed = True
+            target.slowed_turns = 3
 
             def slow_action(gamestate):
-                if gamestate.time %2 ==0 and target.is_slowed:
-                    target.slowed_turns -= 1
-                    if target.slowed_turns ==0:
-                        target.is_slowed = False
+                if gamestate.time%2!=0:
+                    target.slowed_turns-=1
+                    if target.slowed_turns<0:
+                        Bee.action(target,gamestate)
                 else:
-                    target.slowed_turns -=1
-                    #target.action(gamestate)
+                    #target.slowed_turns -=1
+                    Bee.action(target,gamestate)
             target.action = slow_action
             # END Problem 13
 
@@ -565,7 +566,13 @@ class Bee(Insect):
         """Return True if this Bee cannot advance to the next Place."""
         # Special handling for NinjaAnt
         # BEGIN Problem Optional 1
-        return self.place.ant is not None
+        if self.place.ant is None:
+            return False
+        elif not self.place.ant.blocks_path:
+            return False
+        elif self.place.ant.blocks_path:
+            return True
+        #return self.place.ant is not None
         # END Problem Optional 1
 
     def action(self, gamestate):
@@ -604,12 +611,16 @@ class NinjaAnt(Ant):
     food_cost = 5
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem Optional 1
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    blocks_path = False
     # END Problem Optional 1
 
     def action(self, gamestate):
         # BEGIN Problem Optional 1
         "*** YOUR CODE HERE ***"
+        for bee in self.place.bees[:]:
+            bee.reduce_health(self.damage)
+        
         # END Problem Optional 1
 
 ############
@@ -623,8 +634,9 @@ class LaserAnt(ThrowerAnt):
     name = 'Laser'
     food_cost = 10
     # OVERRIDE CLASS ATTRIBUTES HERE
+    #base_damage = 2
     # BEGIN Problem Optional 2
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem Optional 2
 
     def __init__(self, health=1):
@@ -633,12 +645,40 @@ class LaserAnt(ThrowerAnt):
 
     def insects_in_front(self):
         # BEGIN Problem Optional 2
-        return {}
+        current_place = self.place
+        distance = 0
+        result = {}
+        if self.place.ant!=self:
+            result[self.place.ant] = distance
+        if current_place.bees != []:
+            for bee in current_place.bees[:]:
+                result[bee]= distance
+        current_place = current_place.entrance
+        distance +=1
+        while not current_place.is_hive:
+            if current_place.ant is not None:
+                if current_place.ant.is_container:
+                    result[current_place.ant] = distance
+                    result[current_place.ant.ant_contained] = distance
+                else:
+                    result[current_place.ant] = distance
+            if current_place.bees != []:
+                for bee in current_place.bees[:]:
+                    result[bee] = distance
+            current_place = current_place.entrance
+            distance +=1
+        
+        return result
         # END Problem Optional 2
 
     def calculate_damage(self, distance):
         # BEGIN Problem Optional 2
-        return 0
+        #total_damage = 0
+        total_damage = 2- 1/4*distance - 0.0625*self.insects_shot
+        if total_damage<=0:
+            return 0
+        else:
+            return total_damage
         # END Problem Optional 2
 
     def action(self, gamestate):

@@ -17,6 +17,16 @@ def store_digits(n):
     >>> link1 = Link(3, Link(Link(4), Link(5, Link(6))))
     """
     "*** YOUR CODE HERE ***"
+    l = Link(n%10)
+    n = n//10
+    while n!=0:
+      #prev_num = n//10
+      last_num = n%10
+      n = n//10
+      temp = Link(last_num)
+      temp.rest = l
+      l = temp
+    return l
 
 
 def deep_map_mut(func, lnk):
@@ -37,8 +47,14 @@ def deep_map_mut(func, lnk):
     <9 <16> 25 36>
     """
     "*** YOUR CODE HERE ***"
-
-
+    if lnk is Link.empty:
+        return
+    elif isinstance(lnk.first,Link):
+        deep_map_mut(func,lnk.first)
+    else:
+        lnk.first = func(lnk.first)
+    deep_map_mut(func,lnk.rest)
+  
 def two_list(vals, counts):
     """
     Returns a linked list according to the two lists that were passed in. Assume
@@ -58,6 +74,18 @@ def two_list(vals, counts):
     Link(1, Link(1, Link(3, Link(3, Link(2)))))
     """
     "*** YOUR CODE HERE ***"
+    result = Link(0)
+    temp = result
+    for i in range(len(vals)):
+        val,count = vals[i],counts[i]
+        for _ in range(count):
+            new_lnk = Link(val)
+            temp.rest = new_lnk
+            temp = temp.rest
+    return result.rest
+
+        
+
 
 
 def add_d_leaves(t, v):
@@ -119,8 +147,20 @@ def add_d_leaves(t, v):
         10
     """
     "*** YOUR CODE HERE ***"
+    def depth_helper(t,v,depth):
+        if t.is_leaf():
+            for _ in range(depth):
+              t.branches.append(Tree(v))
+            return
+        
+        for b in t.branches:
+            depth_helper(b,v,depth+1)
 
+        for _ in range(depth):
+            t.branches.append(Tree(v))
 
+    depth_helper(t,v,0)
+    
 class Link:
     """A linked list.
 

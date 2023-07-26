@@ -1,0 +1,4 @@
+'store_digits-correct', (0, 70)
+'deep_map_mut-correct', (512, 70)
+'two_list-correct', (1024, 70)
+'add_d_leaves-correct', (1536, 70)

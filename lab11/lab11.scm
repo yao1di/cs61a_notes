@@ -3,11 +3,13 @@
 ((= num1 num2) 0) 
 (else 1)))
 
-(define (make-adder num) 'YOUR-CODE-HERE)
+(define (make-adder num) (lambda (inc) (+ num inc)))
 
-(define (composed f g) 'YOUR-CODE-HERE)
+(define (composed f g) (lambda (x) (f (g x))))
 
-(define (repeat f n) 'YOUR-CODE-HERE)
+(define (repeat f n) (if (< n 1)
+  (lambda (x)  x)
+  (composed f (repeat f (- n 1)))))
 
 (define (max a b)
   (if (> a b)
@@ -19,4 +21,7 @@
       b
       a))
 
-(define (gcd a b) 'YOUR-CODE-HERE)
+(define (gcd a b) (if (=(modulo (max a b) (min a b)) 0)
+  (min a b)
+  (gcd (min a b) (modulo(max a b)(min a b)))
+))

@@ -1,4 +1,5 @@
 # You do not need to understand any of this code!
+#from operator import floordiv
 import base64
 ob = "CmRlZiBhZGRpdGlvbihleHByKToKICAgIGRpdmlkZW5kID0gZXhwci5maXJzdAogICAgZXhwciA9IGV4cHIucmVzdAogICAgd2hpbGUgZXhwciAhPSBuaWw6CiAgICAgICAgZGl2aXNvciA9IGV4cHIuZmlyc3QKICAgICAgICBkaXZpZGVuZCArPSBkaXZpc29yCiAgICAgICAgZXhwciA9IGV4cHIucmVzdAogICAgcmV0dXJuIGRpdmlkZW5kCgpkZWYgc3VidHJhY3Rpb24oZXhwcik6CiAgICBkaXZpZGVuZCA9IGV4cHIuZmlyc3QKICAgIGV4cHIgPSBleHByLnJlc3QKICAgIHdoaWxlIGV4cHIgIT0gbmlsOgogICAgICAgIGRpdmlzb3IgPSBleHByLmZpcnN0CiAgICAgICAgZGl2aWRlbmQgLT0gZGl2aXNvcgogICAgICAgIGV4cHIgPSBleHByLnJlc3QKICAgIHJldHVybiBkaXZpZGVuZAoKZGVmIG11bHRpcGxpY2F0aW9uKGV4cHIpOgogICAgZGl2aWRlbmQgPSBleHByLmZpcnN0CiAgICBleHByID0gZXhwci5yZXN0CiAgICB3aGlsZSBleHByICE9IG5pbDoKICAgICAgICBkaXZpc29yID0gZXhwci5maXJzdAogICAgICAgIGRpdmlkZW5kICo9IGRpdmlzb3IKICAgICAgICBleHByID0gZXhwci5yZXN0CiAgICByZXR1cm4gZGl2aWRlbmQKCmRlZiBkaXZpc2lvbihleHByKToKICAgIGRpdmlkZW5kID0gZXhwci5maXJzdAogICAgZXhwciA9IGV4cHIucmVzdAogICAgd2hpbGUgZXhwciAhPSBuaWw6CiAgICAgICAgZGl2aXNvciA9IGV4cHIuZmlyc3QKICAgICAgICBkaXZpZGVuZCAvPSBkaXZpc29yCiAgICAgICAgZXhwciA9IGV4cHIucmVzdAogICAgcmV0dXJuIGRpdmlkZW5kCg=="
 exec(base64.b64decode(ob.encode("ascii")).decode("ascii"))
@@ -15,20 +16,20 @@ def calc_eval(exp):
     3
     """
     if isinstance(exp, Pair):
-        operator = ____________  # UPDATE THIS FOR Q3
-        operands = ____________  # UPDATE THIS FOR Q3
+        operator = exp.first  # UPDATE THIS FOR Q3
+        operands = exp.rest  # UPDATE THIS FOR Q3
         if operator == 'and':  # and expressions
             return eval_and(operands)
         elif operator == 'define':  # define expressions
             return eval_define(operands)
         else:  # Call expressions
-            return calc_apply(___________, ___________)  # UPDATE THIS FOR Q3
+            return calc_apply(calc_eval(operator), operands.map(calc_eval))  # UPDATE THIS FOR Q3
     elif exp in OPERATORS:   # Looking up procedures
         return OPERATORS[exp]
     elif isinstance(exp, int) or isinstance(exp, bool):   # Numbers and booleans
         return exp
-    elif _________________:  # CHANGE THIS CONDITION FOR Q5
-        return _________________  # UPDATE THIS FOR Q5
+    elif isinstance(exp,str):  # CHANGE THIS CONDITION FOR Q5
+        return bindings[exp]  # UPDATE THIS FOR Q5
 
 
 def calc_apply(op, args):
@@ -53,6 +54,13 @@ def floor_div(expr):
     3
     """
     # BEGIN SOLUTION Q3
+    dividend = expr.first
+    expr = expr.rest
+    while expr is not nil:
+        dividor = expr.first
+        dividend = dividend//dividor
+        expr = expr.rest
+    return dividend
 
 
 def eval_and(operands):
@@ -73,6 +81,31 @@ def eval_and(operands):
     True
     """
     # BEGIN SOLUTION Q4
+    #curr, val = operands, True
+    #while curr is not nil:
+    #    val = calc_eval(curr.first)
+    #    if val is False:
+    #        return False
+    #    curr = curr.rest
+    #return val
+    #### my solution
+    #if operands is nil:
+    #    return True
+    #elif operands.first is False:
+    #    return False
+    #else:
+    #    result = eval_and(operands.rest)
+    #    if result==nil or result is True:
+    #        return calc_eval(operands.first)
+    #    else:
+    #        return result
+    curr,result = operands,True
+    while curr is not nil:
+        result = calc_eval(curr.first)
+        if result is False:
+            return False
+        curr = curr.rest
+    return result
 
 
 bindings = {}
@@ -94,6 +127,9 @@ def eval_define(expr):
     2
     """
     # BEGIN SOLUTION Q5
+    bindings[expr.first] = calc_eval(expr.rest.first)
+    return expr.first
+
 
 
 OPERATORS = {"//": floor_div, "+": addition, "-": subtraction, "*": multiplication, "/": division}

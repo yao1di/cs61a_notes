@@ -38,11 +38,24 @@ def do_define_form(expressions, env):
         validate_form(expressions, 2, 2)  # Checks that expressions is a list of length exactly 2
         # BEGIN PROBLEM 4
         "*** YOUR CODE HERE ***"
+        rest = expressions.rest
+        #if isinstance(rest.first,int):
+        #    env.define(signature, rest.first)
+        #else:
+        env.define(signature, scheme_eval(rest.first,env))
+        return signature
         # END PROBLEM 4
     elif isinstance(signature, Pair) and scheme_symbolp(signature.first):
         # defining a named procedure e.g. (define (f x y) (+ x y))
         # BEGIN PROBLEM 10
         "*** YOUR CODE HERE ***"
+        symbol = signature.first
+        formals = signature.rest
+        body = expressions.rest
+        expression = Pair(formals,body)
+        procedures = do_lambda_form(expression,env)
+        env.define(symbol,procedures)
+        return symbol
         # END PROBLEM 10
     else:
         bad_signature = signature.first if isinstance(signature, Pair) else signature
@@ -59,6 +72,7 @@ def do_quote_form(expressions, env):
     validate_form(expressions, 1, 1)
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    return expressions.first
     # END PROBLEM 5
 
 
@@ -87,6 +101,10 @@ def do_lambda_form(expressions, env):
     validate_formals(formals)
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    formals = expressions.first
+    body = expressions.rest
+    env = env
+    return LambdaProcedure(formals,body,env)
     # END PROBLEM 7
 
 

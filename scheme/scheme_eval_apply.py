@@ -22,7 +22,7 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     """
     # Evaluate atoms
     if scheme_symbolp(expr):
-        return env.lookup(expr)
+        return env.lookup(expr) #Q: What expression in the body of scheme_eval finds the value of a name?
     elif self_evaluating(expr):
         return expr
 
@@ -35,6 +35,10 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     else:
         # BEGIN PROBLEM 3
         "*** YOUR CODE HERE ***"
+        procedure = scheme_eval(first,env)
+        validate_procedure(procedure)
+        args = rest.map(lambda x:scheme_eval(x,env))## 这里要注意使用lambda函数第二次忘记
+        return scheme_apply(procedure,args,env)
         # END PROBLEM 3
 
 
@@ -47,16 +51,26 @@ def scheme_apply(procedure, args, env):
     if isinstance(procedure, BuiltinProcedure):
         # BEGIN PROBLEM 2
         "*** YOUR CODE HERE ***"
+        list = []
+        while args is not nil:
+            list.append(args.first)
+            args = args.rest
+        args = list
+        if procedure.need_env:
+            args.append(env)
         # END PROBLEM 2
         try:
             # BEGIN PROBLEM 2
             "*** YOUR CODE HERE ***"
+            return procedure.py_func(*args)
             # END PROBLEM 2
         except TypeError as err:
             raise SchemeError('incorrect number of arguments: {0}'.format(procedure))
     elif isinstance(procedure, LambdaProcedure):
         # BEGIN PROBLEM 9
         "*** YOUR CODE HERE ***"
+        child_frame = procedure.env.make_child_frame(procedure.formals,args)## 环境搞错了
+        return eval_all(procedure.body,child_frame)
         # END PROBLEM 9
     elif isinstance(procedure, MuProcedure):
         # BEGIN PROBLEM 11
@@ -82,7 +96,11 @@ def eval_all(expressions, env):
     2
     """
     # BEGIN PROBLEM 6
-    return scheme_eval(expressions.first, env)  # replace this with lines of your own code
+    result = None
+    while expressions is not nil:
+        result =scheme_eval(expressions.first,env)
+        expressions = expressions.rest
+    return result  # replace this with lines of your own code
     # END PROBLEM 6
 
 

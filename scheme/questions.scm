@@ -7,7 +7,12 @@
 ;; Returns a list of two-element lists
 (define (enumerate s)
   ; BEGIN PROBLEM 15
-  'replace-this-line
+  (define (helper_func s num);;;maybe a helper_func here
+    (cond ((null? s) ())
+      (else 
+      (cons (list num (car s)) (helper_func (cdr s)(+ num 1)))
+      )))
+  (helper_func s 0)
   )
   ; END PROBLEM 15
 
@@ -17,8 +22,13 @@
 ;; the merged lists.
 (define (merge ordered? list1 list2)
   ; BEGIN PROBLEM 16
-  'replace-this-line
+  (cond ((null? list1) list2)
+    ((null? list2) list1)
+    (else (if (ordered? (car list1) (car list2))
+      (cons (car list1) (merge ordered? (cdr list1) list2))
+      (cons (car list2) (merge ordered? list1 (cdr list2)))))
   )
+)
   ; END PROBLEM 16
 
 ;; Optional Problem
@@ -36,12 +46,12 @@
 (define (let-to-lambda expr)
   (cond ((atom? expr)
          ; BEGIN OPTIONAL PROBLEM
-         'replace-this-line
+         expr
          ; END OPTIONAL PROBLEM
          )
         ((quoted? expr)
          ; BEGIN OPTIONAL PROBLEM
-         'replace-this-line
+         expr
          ; END OPTIONAL PROBLEM
          )
         ((or (lambda? expr)
@@ -50,23 +60,23 @@
                (params (cadr expr))
                (body   (cddr expr)))
            ; BEGIN OPTIONAL PROBLEM
-           'replace-this-line
+           (cons form (cons (map let-to-lambda params) (map let-to-lambda body)))
            ; END OPTIONAL PROBLEM
            ))
         ((let? expr)
          (let ((values (cadr expr))
                (body   (cddr expr)))
            ; BEGIN OPTIONAL PROBLEM
-           'replace-this-line
+           (cons (cons 'lambda (cons (car (zip (let-to-lambda values))) (let-to-lambda body))) (cadr (zip (let-to-lambda values))))
            ; END OPTIONAL PROBLEM
            ))
         (else
          ; BEGIN OPTIONAL PROBLEM
-         'replace-this-line
+         (map let-to-lambda expr)
          ; END OPTIONAL PROBLEM
          )))
 
 ; Some utility functions that you may find useful to implement for let-to-lambda
 
 (define (zip pairs)
-  'replace-this-line)
+  (list (map car pairs) (map cadr pairs)))
